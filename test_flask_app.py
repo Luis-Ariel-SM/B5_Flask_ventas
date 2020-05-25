@@ -6,10 +6,10 @@ class TestWeb(TestFlaskBase):
         loquemedevuelve = self.client.get('/')
         self.assertEqual(loquemedevuelve.status_code, 200)
 
-    def test_route_index_is_Hola_mundo(self):
+    def test_route_index_is_lista_regiones(self):
         loquemedevuelve = self.client.get('/')
         self.assertEqual(loquemedevuelve.status_code, 200)
-        self.assertEqual(loquemedevuelve.data, b'Hola mundo')
+        
 
        
 
