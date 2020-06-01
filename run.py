@@ -1,23 +1,23 @@
 from flask import Flask, render_template, request
-import csv
+import csv # libreria de Python para trabajar con los ficheros .csv
 
-app = Flask (__name__)
+app = Flask (__name__) # Esta es la aplicacion flask
    
         
-@app.route("/")
-def index():
-    fVentas = open ('./sales10.csv', 'r')
-    csvreader = csv.reader(fVentas, delimiter=',')
+@app.route("/") #decorador en flask para añadir una ruta e inyecta todo el contenido de index en la apñicacion de flask
+def index(): # La funcion es standar y forma parte del decorador. Tiene que tener un return
+    fVentas = open ('./sales10.csv', 'r') # Abriendo fichero csv y guardandolo en la variable fVentas
+    csvreader = csv.reader(fVentas, delimiter=',') #procesando el fichero csv guardado en fVentas con la libreria csv de python. La sintaxis es propia de la libreria, ver documentacion.
     registros = []
     d = {} #creando el diccionario
     for linea in csvreader:
         registros.append(linea)
-        if linea [0] in d:
-            d[linea[0]]['ingresos'] += float(linea[11])
+        if linea [0] in d: # Si este valor ya existe en el diccionario
+            d[linea[0]]['ingresos'] += float(linea[11]) # Añadele los siguientes valores 
             d[linea[0]]['beneficios'] += float(linea[13])
-        else:
+        else: # y sino
             if linea [0] != 'region':
-                d[linea[0]] = {'ingresos': float(linea [11]), 'beneficios': float(linea[13])}
+                d[linea[0]] = {'ingresos': float(linea [11]), 'beneficios': float(linea[13])} # crealos (Es aqui donde se va creando el diccionario y sera el valor de la clave que exista en linea[0])
     
     return render_template ('region.html',ventas=d)
 
