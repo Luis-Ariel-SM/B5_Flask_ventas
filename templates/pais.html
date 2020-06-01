@@ -11,7 +11,7 @@
             <th>Ventas</th>
             <th>Beneficios</th>
         </tr>
-        {% for pais,data in ventas_pais.items()%}
+        {%for pais,data in ventas_pais.items()%}
         <tr>
             <td class='pais'> {{pais}}</td>
             <td class='numero'>{{data.ingresos}}</td>
