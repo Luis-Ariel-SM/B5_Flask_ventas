@@ -5,12 +5,15 @@
     <title>Global S.L | {% block titulo %}{% endblock %}</title>
     <link rel="stylesheet" href="/static/normalize.css">
     <link rel="stylesheet" href="/static/skeleton.css">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <header>
         GLOBAL S.L.
     </header>
     <section class='container'>
+        <div class = 'menu'></div>
+        <a href="/">Ventas</a>  | <a href="/productos">Productos</a>
         {% block contenido %}{% endblock %} 
     </section>
     <footer>

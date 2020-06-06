@@ -1,6 +1,6 @@
 import csv, sqlite3
 
-filename = "./sales10.csv" # metiendo el fichero en la variable filename 
+filename = "./sales.csv" # metiendo el fichero en la variable filename 
 database = "./data/ventas.db" # metiendo la base de datos en la variable database
 
 conn = sqlite3.connect(database) # conectando la base de datos

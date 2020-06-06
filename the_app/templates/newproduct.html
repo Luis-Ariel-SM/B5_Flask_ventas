@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block titulo%}Alta de producto{% endblock %}
+
+{% block contenido %}
+    <h1>Alta de producto</h1>
+    <form class="u-full-width" action="/addproducto" method="post">
+        {{form.hidden_tag() }}
+        {{form.tipo_producto.label}}        
+        {{form.tipo_producto(class="u-full-width", placeholder="Producto")}}
+       
+        {{form.precio_unitario.label}} 
+        {{form.precio_unitario(class="u-full-width", placeholder="Precio por unidad")}}
+        
+        {{form.coste_unitario.label}}   
+        {{form.coste_unitario(class="u-full-width", placeholder="Coste por unidad" )}}         
+        
+        {{form.submit(class="button-primary")}}
+
+<!--
+        <label for="tipo_producto">Tipo de Producto:</label>
+        <input class="u-full-width" type="text" name="tipo_producto" id="tipo_producto">
+        <label for="precio_unitario">Precio U.:</label>
+        <input class="u-full-width" type="number" name="precio_unitario" id="precio_unitario" step="0.01">
+        <label for="precio_unitario">Coste U.:</label>
+        <input class="u-full-width" type="number" name="coste_unitario" id="coste_unitario" step="0.01">
+        <input type="submit" class="button primary" value="Aceptar">
+-->
+        
+    </form>
+{%endblock%}

@@ -5,17 +5,17 @@
 
 {% block contenido %}
     <h1>Ventas en {{region_nm}}, deglozadas por pais <a class="button button-primary" href="/">Atras</a></h1>
-    <table>
+    <table class="u-full-width">
         <tr>
             <th>País</th>
-            <th>Ventas</th>
-            <th>Beneficios</th>
+            <th class='margen'>Ventas</th>
+            <th class='margen'>Beneficios</th>
         </tr>
         {%for pais,data in ventas_pais.items()%}
         <tr>
-            <td class='pais'> {{pais}}</td>
-            <td class='numero'>{{data.ingresos}}</td>
-            <td class='numero'>{{data.beneficios}}</td>
+            <td> {{pais}}</td>
+            <td class='margen'>{{data.ingresos | round(2, 'floor')}}€</td>
+            <td class='margen'>{{data.beneficios | round(2, 'floor')}}€</td>
         </tr>
         {% endfor%}
     </table>
