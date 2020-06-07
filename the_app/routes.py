@@ -8,7 +8,7 @@ from the_app.forms import ProductForm
 @app.route("/") # Decorador en flask para añadir una ruta e inyecta todo el contenido de index en la aplicacion de flask
 def index(): # La funcion es standar y forma parte del decorador. Tiene que tener un return
 
-    fVentas = open ('./sales.csv', 'r') # Abriendo fichero csv y guardandolo en la variable fVentas. las rutas relativas a los ficheros
+    fVentas = open (app.config['VENTAS'], 'r') # Abriendo fichero csv y guardandolo en la variable fVentas. las rutas relativas a los ficheros
                                         # se dan desde donde se ejecuta la app, no desde donde escriba la ruta. 
     csvreader = csv.reader(fVentas, delimiter=',') #procesando el fichero csv guardado en fVentas con la libreria csv de python. La sintaxis es propia de la libreria, ver documentacion.
     registros = []
@@ -28,7 +28,7 @@ def index(): # La funcion es standar y forma parte del decorador. Tiene que tene
 def paises():          
   
     region_name = request.values ['region']
-    fVentas = open ('./sales.csv','r')
+    fVentas = open (app.config['VENTAS'],'r')
     cvsreader = csv.reader (fVentas, delimiter =',')
     d = {}
     for linea in cvsreader:
