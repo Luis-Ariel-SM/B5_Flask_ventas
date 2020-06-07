@@ -27,7 +27,7 @@ def index(): # La funcion es standar y forma parte del decorador. Tiene que tene
 @app.route ('/paises') # Las app.routes son funciones que se añaden al modulo app pero realmente no es desde aqui que se lanza la aplicacion
 def paises():          
   
-    region_name = request.values ['region']
+    region_name = request.values ['region'] # Los request.values son los parametros de GET y POST
     fVentas = open (app.config['VENTAS'],'r')
     cvsreader = csv.reader (fVentas, delimiter =',')
     d = {}
@@ -54,20 +54,23 @@ def productos():
 
 @app.route('/addproducto', methods=['GET', 'POST'])
 def addproduct():
-    form = ProductForm()
+    form = ProductForm(request.form)# inicializando el formulario con request.form para heredar los atributos ya creados en forms.py
 
     if request.method == 'GET':
         return render_template ('newproduct.html', form=form)
     else:
-        conn = sqlite3.connect (app.config['BASE_DATOS'])
-        cur = conn.cursor()
-        query ="INSERT INTO productos (tipo_producto, precio_unitario, coste_unitario) values (?,?,?); "
-        datos = (request.values.get ('tipo_producto'), request.values.get ('precio_unitario'), request.values.get ('coste_unitario'))
+        if form.validate():#Metodo de validacion propio de flask, para llegar al 'POST' con la informacion dada por el navegador se necesita inicializar el formulario con request.form 
+            conn = sqlite3.connect (app.config['BASE_DATOS'])
+            cur = conn.cursor()
+            query ="INSERT INTO productos (tipo_producto, precio_unitario, coste_unitario) values (?,?,?); "
+            datos = (request.values.get ('tipo_producto'), request.values.get ('precio_unitario'), request.values.get ('coste_unitario'))
 
-        cur.execute (query,datos)
-       
-        conn.commit()
-        conn.close()
+            cur.execute (query,datos)
+        
+            conn.commit()
+            conn.close()
 
-        return redirect(url_for('productos'))
+            return redirect(url_for('productos'))
 
+        else:
+            return render_template ('newproduct.html', form=form)

@@ -18,6 +18,17 @@ footer{
     padding-top: 10px;
     padding-bottom: 40px;
 }
+
 .margen{
     text-align: right;
+}
+
+.error-msg{
+    color: red;
+    font-size: 1em;
+    text-align: right;
+    margin-top: -15px;    
+}
+input.error{
+    border-color: red;
 }

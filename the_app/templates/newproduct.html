@@ -6,14 +6,35 @@
     <h1>Alta de producto</h1>
     <form class="u-full-width" action="/addproducto" method="post">
         {{form.hidden_tag() }}
-        {{form.tipo_producto.label}}        
-        {{form.tipo_producto(class="u-full-width", placeholder="Producto")}}
-       
-        {{form.precio_unitario.label}} 
-        {{form.precio_unitario(class="u-full-width", placeholder="Precio por unidad")}}
+        {{form.tipo_producto.label}}
+        {% if form.tipo_producto.errors %} <!--...si hay errores...-->                   
+            {{form.tipo_producto(class="u-full-width error", placeholder="Producto")}} <!--imprimo el campo con los datos y despues...-->        
+            {% for error in form.tipo_producto.errors %}
+                <p class="error-msg">{{ error }}</p> <!--...imprimo todos los errores en un tipo de parrafo especifico-->
+            {% endfor %}
+        {% else %}
+            {{form.tipo_producto(class="u-full-width", placeholder="Producto")}}
+        {% endif %}
+
+        {{form.precio_unitario.label}}
+        {% if form.precio_unitario.errors %}            
+            {{form.precio_unitario(class="u-full-width error", placeholder="Precio por unidad")}}         
+            {% for error in form.precio_unitario.errors %}
+                <p class="error-msg">{{ error }}</p> 
+            {% endfor %}
+        ¨{% else %}
+            {{form.precio_unitario(class="u-full-width", placeholder="Precio por unidad")}}
+        {% endif %}
         
-        {{form.coste_unitario.label}}   
-        {{form.coste_unitario(class="u-full-width", placeholder="Coste por unidad" )}}         
+        {{form.coste_unitario.label}}
+        {% if form.coste_unitario.errors %} 
+            {{form.coste_unitario(class="u-full-width error", placeholder="Coste por unidad" )}}         
+            {% for error in form.coste_unitario.errors %}
+                <p class="error-msg">{{ error }}</p> 
+            {% endfor %}
+        {% else %}
+            {{form.coste_unitario(class="u-full-width", placeholder="Coste por unidad" )}}
+        {% endif %}         
         
         {{form.submit(class="button-primary")}}
 
