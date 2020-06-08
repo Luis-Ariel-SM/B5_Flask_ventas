@@ -52,7 +52,7 @@ def productos():
     conn.close()
     return render_template ('productos.html', productos=resultado)
 
-@app.route('/addproducto', methods=['GET', 'POST'])
+@app.route('/addproducto', methods=['GET', 'POST']) # Siempre que se haga un alta o modificacion se utilizan los 2 metodos, tienen que ser informados los request.methods
 def addproduct():
     form = ProductForm(request.form)# inicializando el formulario con request.form para heredar los atributos ya creados en forms.py
 
@@ -74,3 +74,20 @@ def addproduct():
 
         else:
             return render_template ('newproduct.html', form=form)
+
+@app.route('/modificaproducto',methods=['GET','POST'])
+def modifica_producto():
+    id = request.values ['id'] # id es el indice 0 en la base de datos, se pedira ese valor
+
+    conn=sqlite3.connect (app.config['BASE_DATOS']) # Estableciendo coneccion con la base de datos
+    cur = conn.cursor() # Creando cursor de la coneccion
+    query = "SELECT id, tipo_producto, precio_unitario, coste_unitario FROM productos where id = ?;"# Realizando peticion a la base de datos 
+    # segun sintaxis de la misma
+    cur.execute(query,(id,)) #Si metemos un solo valor dentro de una tupla lo considerara un valor numerico, para se considerado como tupla se le pone la coma detras
+    
+    fila = cur.fetchone()
+
+    form = ProductForm(data={'id': fila[0], 'tipo_producto': fila[1], 'precio_unitario': fila[2], 'coste_unitario': fila[3]})
+    
+   
+    return render_template('modifica_producto.html', form=form)
