@@ -1,10 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, SubmitField
+from wtforms import StringField, FloatField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, Length, ValidationError
 
 
 
 class ProductForm(FlaskForm):
+    id = HiddenField('id') # Campo oculto, no aparecera visualmente pero si viajara el dato con las peticiones del navegador
     tipo_producto = StringField('Tipo de producto', validators=[DataRequired(), Length(min=3, message='Debe tener al menos tres caracteres')])
     precio_unitario = FloatField ('Precio unitario', validators=[DataRequired(message='Bajanda')])
     coste_unitario = FloatField ('Coste unitario', validators=[DataRequired()])

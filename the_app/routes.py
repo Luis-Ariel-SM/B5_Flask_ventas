@@ -77,17 +77,37 @@ def addproduct():
 
 @app.route('/modificaproducto',methods=['GET','POST'])
 def modifica_producto():
-    id = request.values ['id'] # id es el indice 0 en la base de datos, se pedira ese valor
+    if request.method == 'GET':
+        id = request.values ['id'] # id es el indice 0 en la base de datos, se pedira ese valor
 
-    conn=sqlite3.connect (app.config['BASE_DATOS']) # Estableciendo coneccion con la base de datos
-    cur = conn.cursor() # Creando cursor de la coneccion
-    query = "SELECT id, tipo_producto, precio_unitario, coste_unitario FROM productos where id = ?;"# Realizando peticion a la base de datos 
-    # segun sintaxis de la misma
-    cur.execute(query,(id,)) #Si metemos un solo valor dentro de una tupla lo considerara un valor numerico, para se considerado como tupla se le pone la coma detras
-    
-    fila = cur.fetchone()
+        conn=sqlite3.connect (app.config['BASE_DATOS']) # Estableciendo coneccion con la base de datos
+        cur = conn.cursor() # Creando cursor de la coneccion
+        query = "SELECT id, tipo_producto, precio_unitario, coste_unitario FROM productos where id = ?;"# Realizando peticion a la base de datos 
+        # segun sintaxis de la misma
+        cur.execute(query,(id,)) #Si metemos un solo valor dentro de una tupla lo considerara un valor numerico, para se considerado como tupla se le pone la coma detras
+        
+        fila = cur.fetchone()
+        conn.close() 
+        if fila: # Si existe la base de datos, me devuelves mi formulario
+            form = ProductForm(data={'id': fila[0], 'tipo_producto': fila[1], 'precio_unitario': fila[2], 'coste_unitario': fila[3]}) # Aqui el get viene vacio y hay que crear el formulario e instanciarlo
+            form.submit.label.text='Modificar' #Reutilizando el mismo formulario para evitar hacer uno nuevo pero cambiandole a las bravas el label "Aceptar" x "Modificar"
+            return render_template('modifica_producto.html', form=form)
+        else:# y sino existe me velves a la lista de"productos" tal y como estaba ya que no se pueden hacer cambios.
+            return redirect(url_for('productos'))
 
-    form = ProductForm(data={'id': fila[0], 'tipo_producto': fila[1], 'precio_unitario': fila[2], 'coste_unitario': fila[3]})
-    
-   
-    return render_template('modifica_producto.html', form=form)
+    else: # Si es POST, lo sera ya que la 2da peticion del formulario es para meter nuevos datos
+        form = ProductForm (request.form) # Aqui ya el formulario viene con datos
+        if form.validate():
+            conn =sqlite3.connect (app.config['BASE_DATOS']) 
+            cur = conn.cursor()
+
+            query = 'UPDATE productos SET tipo_producto = ?, precio_unitario = ?, coste_unitario = ? WHERE id = ?;'
+            cur.execute(query, (form.tipo_producto.data, form.precio_unitario.data, form.coste_unitario.data, form.id.data))
+
+            conn.commit()
+            conn.close()
+            return redirect(url_for('productos'))
+        else:
+            form.submit.label.text='Modificar'
+            return render_template('modifica_producto.html', form=form)
+            

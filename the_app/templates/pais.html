@@ -14,8 +14,8 @@
         {%for pais,data in ventas_pais.items()%}
         <tr>
             <td> {{pais}}</td>
-            <td class='margen'>{{data.ingresos | round(2, 'floor')}}€</td>
-            <td class='margen'>{{data.beneficios | round(2, 'floor')}}€</td>
+            <td class='margen'>{{data.ingresos | round(2, 'floor')}} €</td>
+            <td class='margen'>{{data.beneficios | round(2, 'floor')}} €</td>
         </tr>
         {% endfor%}
     </table>

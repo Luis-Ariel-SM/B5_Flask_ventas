@@ -4,7 +4,7 @@
 
 {% block contenido %}
     <h1>Detalle de producto</h1>
-    <form action="/modificaproducto" class="u-full-width" method="post">
+        <form action="/modificaproducto" class="u-full-width" method="post">
         {{form.hidden_tag() }}
         {{form.tipo_producto.label}}
         {% if form.tipo_producto.errors %} <!--...si hay errores...-->                   
@@ -37,6 +37,6 @@
         {% endif %}         
         
         {{form.submit(class="button-primary")}}
-        
+
     </form>
 {% endblock %}

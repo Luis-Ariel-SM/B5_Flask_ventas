@@ -15,8 +15,8 @@
         {% for producto in productos%}
         <tr>           
             <td class='producto'><a href="/modificaproducto?id={{producto [0]}}">{{producto [1]}}</a></td>
-            <td class='margen'>{{producto [2] | round(2, 'floor')}}€</td>
-            <td class='margen'>{{producto [3] | round(2, 'floor')}}€</td>
+            <td class='margen'>{{producto [2] | round(2, 'floor')}} €</td>
+            <td class='margen'>{{producto [3] | round(2, 'floor')}} €</td>
         </tr>
         {% endfor%}
     </table>
