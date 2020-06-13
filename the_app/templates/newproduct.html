@@ -4,6 +4,9 @@
 
 {% block contenido %}
     <h1>Alta de producto</h1>
+    {% if error_gral %}
+        <p class="error-msg">{{error_gral}}</p>
+    {% endif %}
     <form class="u-full-width" action="/addproducto" method="post">
         {{form.hidden_tag() }}
         {{form.tipo_producto.label}}

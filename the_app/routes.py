@@ -2,7 +2,7 @@ from the_app import app
 from flask import Flask, render_template, request, redirect, url_for
 import csv # libreria de Python para trabajar con los ficheros .csv
 import sqlite3 # libreria de Python para las base de datos, ver documentacion de python
-from the_app.forms import ProductForm
+from the_app.forms import ProductForm, ModProductForm
 
    
 @app.route("/") # Decorador en flask para añadir una ruta e inyecta todo el contenido de index en la aplicacion de flask
@@ -57,23 +57,26 @@ def addproduct():
     form = ProductForm(request.form)# inicializando el formulario con request.form para heredar los atributos ya creados en forms.py
 
     if request.method == 'GET':
-        return render_template ('newproduct.html', form=form)
+        return render_template ('newproduct.html', form=form, error_gral = False)
     else:
         if form.validate():#Metodo de validacion propio de flask, para llegar al 'POST' con la informacion dada por el navegador se necesita inicializar el formulario con request.form 
             conn = sqlite3.connect (app.config['BASE_DATOS'])
             cur = conn.cursor()
             query ="INSERT INTO productos (tipo_producto, precio_unitario, coste_unitario) values (?,?,?); "
             datos = (request.values.get ('tipo_producto'), request.values.get ('precio_unitario'), request.values.get ('coste_unitario'))
+            try:
+                cur.execute (query,datos)        
+                conn.commit()
+            except Exception as e:
+                print ('INSERT - Error en acceso a base de datos: {}'.format(e))
+                conn.close()
+                return render_template('newproduct.html', form=form, error_gral='Error en acceso a base de datos:{}'.format(e))
 
-            cur.execute (query,datos)
-        
-            conn.commit()
             conn.close()
-
             return redirect(url_for('productos'))
 
         else:
-            return render_template ('newproduct.html', form=form)
+            return render_template ('newproduct.html', form=form, error_gral = False)
 
 @app.route('/modificaproducto',methods=['GET','POST'])
 def modifica_producto():
@@ -89,25 +92,37 @@ def modifica_producto():
         fila = cur.fetchone()
         conn.close() 
         if fila: # Si existe la base de datos, me devuelves mi formulario
-            form = ProductForm(data={'id': fila[0], 'tipo_producto': fila[1], 'precio_unitario': fila[2], 'coste_unitario': fila[3]}) # Aqui el get viene vacio y hay que crear el formulario e instanciarlo
-            form.submit.label.text='Modificar' #Reutilizando el mismo formulario para evitar hacer uno nuevo pero cambiandole a las bravas el label "Aceptar" x "Modificar"
-            return render_template('modifica_producto.html', form=form)
+            form = ModProductForm(data={'id': fila[0], 'tipo_producto': fila[1], 'precio_unitario': fila[2], 'coste_unitario': fila[3]}) # Aqui el get viene vacio y hay que crear el formulario e instanciarlo
+            return render_template ('modifica_producto.html', form=form)
         else:# y sino existe me velves a la lista de"productos" tal y como estaba ya que no se pueden hacer cambios.
             return redirect(url_for('productos'))
 
     else: # Si es POST, lo sera ya que la 2da peticion del formulario es para meter nuevos datos
-        form = ProductForm (request.form) # Aqui ya el formulario viene con datos
-        if form.validate():
-            conn =sqlite3.connect (app.config['BASE_DATOS']) 
-            cur = conn.cursor()
+        form = ModProductForm (request.form) # Aqui ya el formulario viene con datos
+         
+        
+        if request.form.get('modificar'): # Si la pregunta es 'modificar'...  ('modificar' es un diccionario, por eso se utiliza el .get para ver ese indice)      
 
-            query = 'UPDATE productos SET tipo_producto = ?, precio_unitario = ?, coste_unitario = ? WHERE id = ?;'
-            cur.execute(query, (form.tipo_producto.data, form.precio_unitario.data, form.coste_unitario.data, form.id.data))
+            if form.validate(): #...Me lo validas y si va bien me creas query  y tupla_data...
+                query = 'UPDATE productos SET tipo_producto = ?, precio_unitario = ?, coste_unitario = ? WHERE id = ?;' # (peticion de 'modificacion' a la base de datos con sintaxis propia de SQlite)
+                tupla_data = (form.tipo_producto.data, form.precio_unitario.data, form.coste_unitario.data, form.id.data) # metiendo los datos de estos parametros en una tupla
+            else: #...Si no va bien la validacion me devuelves el modifica_producto.html para ver que pasa
+                return render_template('modifica_producto.html', form=form)
+        else: # Si en vez de 'modificar' la peticion de 'borrar', 
+            query = 'DELETE FROM productos WHERE id = ?;'
+            tupla_data = (form.id.data,) 
 
-            conn.commit()
-            conn.close()
-            return redirect(url_for('productos'))
-        else:
-            form.submit.label.text='Modificar'
-            return render_template('modifica_producto.html', form=form)
+        conn = sqlite3.connect (app.config['BASE_DATOS']) # Abriendo la base de datos
+        cur = conn.cursor() # Creando el cursor 
+
+        try: # Si la cosa va bien...
+            cur.execute(query, tupla_data) #...executando la modificacion metiendo la lista 'tupla_data' con los nuevos valores modificados
+            conn.commit() #...y me la fijas en la base de datos            
+        except Exception as e:
+            print ('MOD/DEL - Error en acceso a base de datos: {}'.format(e))
+        
+        conn.close() # vaya la cosa como vaya siempre hay que cerrar la conexion a la base de datos despues de abrirla
+        return redirect(url_for('productos'))
+
+            
             
